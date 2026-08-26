@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% block title %}Dashboard &mdash; SentinelAI SIEM{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-end flex-wrap gap-2 mb-3">
+  <div class="section-title mb-0"><span class="eyebrow">Live</span> Security Dashboard</div>
+  <div class="pulse-strip" style="width: 220px;" id="pulseStrip">
+    <span class="seg-low" style="width:25%"></span>
+    <span class="seg-medium" style="width:25%"></span>
+    <span class="seg-high" style="width:25%"></span>
+    <span class="seg-critical" style="width:25%"></span>
+  </div>
+</div>
+
+<!-- Stat cards -->
+<div class="row g-3 mb-4">
+  <div class="col-6 col-md-4 col-xl-2">
+    <div class="stat-card accent-brand">
+      <div class="stat-label">Total Logs</div>
+      <div class="stat-value" id="statTotalLogs">&mdash;</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-4 col-xl-2">
+    <div class="stat-card accent-brand">
+      <div class="stat-label">Threats Detected</div>
+      <div class="stat-value" id="statThreats">&mdash;</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-4 col-xl-2">
+    <div class="stat-card accent-critical">
+      <div class="stat-label">Critical Alerts</div>
+      <div class="stat-value" id="statCritical" style="color: var(--sev-critical);">&mdash;</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-4 col-xl-2">
+    <div class="stat-card accent-high">
+      <div class="stat-label">High Alerts</div>
+      <div class="stat-value" id="statHigh" style="color: var(--sev-high);">&mdash;</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-4 col-xl-2">
+    <div class="stat-card accent-medium">
+      <div class="stat-label">Medium Alerts</div>
+      <div class="stat-value" id="statMedium" style="color: var(--sev-medium);">&mdash;</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-4 col-xl-2">
+    <div class="stat-card accent-low">
+      <div class="stat-label">Low Alerts</div>
+      <div class="stat-value" id="statLow" style="color: var(--sev-low);">&mdash;</div>
+    </div>
+  </div>
+</div>
+
+<!-- Charts -->
+<div class="row g-3 mb-4">
+  <div class="col-lg-4">
+    <div class="panel h-100">
+      <div class="section-title" style="font-size:.92rem;">Severity Distribution</div>
+      <canvas id="severityChart" height="220"></canvas>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="panel h-100">
+      <div class="section-title" style="font-size:.92rem;">Attack Distribution</div>
+      <canvas id="attackTypeChart" height="220"></canvas>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="panel h-100">
+      <div class="section-title" style="font-size:.92rem;">Daily Alerts (14 days)</div>
+      <canvas id="dailyChart" height="220"></canvas>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3 mb-4">
+  <!-- Recent Incidents table -->
+  <div class="col-lg-7">
+    <div class="panel h-100">
+      <div class="section-title" style="font-size:.92rem;">Recent Incidents</div>
+      <div class="table-responsive">
+        <table class="table table-sentinel align-middle mb-0">
+          <thead>
+            <tr><th>Time</th><th>Attack Type</th><th>Source IP</th><th>Severity</th></tr>
+          </thead>
+          <tbody id="recentIncidentsBody">
+            <tr><td colspan="4" class="text-muted small">Loading&hellip;</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="text-end mt-2">
+        <a href="{{ url_for('incidents') }}" class="small">View full incident history &rarr;</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI Threat Summary panel -->
+  <div class="col-lg-5">
+    <div class="panel h-100">
+      <div class="section-title" style="font-size:.92rem;">AI Threat Summary</div>
+      <div id="aiSummaryPanel">
+        <p class="text-muted small mb-0">Loading&hellip;</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Attack Timeline -->
+<div class="row g-3">
+  <div class="col-12">
+    <div class="panel">
+      <div class="section-title" style="font-size:.92rem;">Attack Timeline</div>
+      <div class="timeline" id="attackTimeline">
+        <p class="text-muted small">Loading&hellip;</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

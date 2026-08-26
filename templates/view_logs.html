@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}{{ file.filename }} &mdash; SentinelAI SIEM{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+  <div>
+    <div class="section-title mb-1" style="margin-bottom:.25rem !important;">
+      <span class="eyebrow">File</span> {{ file.filename }}
+    </div>
+    <div class="text-muted small">{{ logs|length }} parsed log line(s) &middot; uploaded {{ file.upload_time }}</div>
+  </div>
+  <div class="d-flex gap-2">
+    <a href="{{ url_for('upload') }}" class="btn btn-outline-sentinel btn-sm">&larr; Back to Uploads</a>
+    <form method="POST" action="{{ url_for('analyze_file', file_id=file.id) }}">
+      <button type="submit" class="btn btn-accent btn-sm">Analyze This File</button>
+    </form>
+  </div>
+</div>
+
+{% if logs %}
+<div class="table-responsive panel">
+  <table class="table table-sentinel align-middle mb-0">
+    <thead>
+      <tr>
+        <th>Timestamp</th>
+        <th>Host</th>
+        <th>IP Address</th>
+        <th>Username</th>
+        <th>Event Type</th>
+        <th>Message</th>
+        <th>Suspicious</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for log in logs %}
+      <tr>
+        <td class="mono small">{{ log.timestamp or '&mdash;' }}</td>
+        <td class="small">{{ log.host_name or '&mdash;' }}</td>
+        <td class="ip-tag">{{ log.ip_address or '&mdash;' }}</td>
+        <td class="small">{{ log.username or '&mdash;' }}</td>
+        <td class="small">{{ log.event_type }}</td>
+        <td class="small text-muted">{{ log.message }}</td>
+        <td>
+          {% if log.is_suspicious %}
+            <span class="badge-sev badge-high">FLAGGED</span>
+          {% else %}
+            <span class="text-muted small">&mdash;</span>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="panel empty-state">
+  <div class="empty-icon">&#128269;</div>
+  <div class="fw-semibold text-light">No log lines could be parsed from this file</div>
+</div>
+{% endif %}
+{% endblock %}

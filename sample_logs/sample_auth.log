@@ -1,0 +1,21 @@
+Jul 10 09:12:01 webserver sshd[1001]: Accepted password for deploy from 10.0.0.5 port 51022 ssh2
+Jul 10 09:15:44 webserver sshd[1002]: session opened for user deploy
+Jul 10 14:32:01 webserver sshd[1341]: Failed password for invalid user admin from 192.168.1.15 port 51000 ssh2
+Jul 10 14:32:04 webserver sshd[1342]: Failed password for invalid user admin from 192.168.1.15 port 51001 ssh2
+Jul 10 14:32:07 webserver sshd[1343]: Failed password for invalid user root from 192.168.1.15 port 51002 ssh2
+Jul 10 14:32:10 webserver sshd[1344]: Failed password for invalid user root from 192.168.1.15 port 51003 ssh2
+Jul 10 14:32:13 webserver sshd[1345]: Failed password for invalid user test from 192.168.1.15 port 51004 ssh2
+Jul 10 14:32:16 webserver sshd[1346]: Failed password for invalid user test from 192.168.1.15 port 51005 ssh2
+Jul 10 14:32:19 webserver sshd[1347]: Failed password for invalid user oracle from 192.168.1.15 port 51006 ssh2
+Jul 10 14:32:22 webserver sshd[1348]: Failed password for invalid user oracle from 192.168.1.15 port 51007 ssh2
+Jul 10 11:05:00 dbserver sshd[2001]: Failed password for postgres from 203.0.113.9 port 44120 ssh2
+Jul 10 11:05:30 dbserver sshd[2002]: Failed password for mysql from 203.0.113.9 port 44121 ssh2
+Jul 10 11:06:00 dbserver sshd[2003]: Failed password for backup from 203.0.113.9 port 44122 ssh2
+Jul 10 11:06:30 dbserver sshd[2004]: Failed password for svc-account from 203.0.113.9 port 44123 ssh2
+Jul 10 11:07:00 dbserver sshd[2005]: Failed password for ftpuser from 203.0.113.9 port 44124 ssh2
+Jul 10 16:00:00 appserver sudo[3001]: pam_unix(sudo:auth): authentication failure; logname=intern uid=1002 euid=0 user=intern from 198.51.100.23
+Jul 10 16:00:05 appserver sudo[3002]: intern : unauthorized command attempted ; PWD=/etc ; USER=root ; COMMAND=/usr/bin/cat /etc/shadow
+Jul 10 08:00:00 webserver sshd[901]: Accepted publickey for ci-bot from 10.0.0.20 port 51500 ssh2
+Jul 10 08:00:01 webserver sshd[902]: session opened for user ci-bot
+Jul 10 08:05:00 webserver sshd[903]: session closed for user ci-bot
+Jul 10 19:41:12 dbserver sshd[2050]: Failed password for admin from 45.33.12.44 port 60011 ssh2

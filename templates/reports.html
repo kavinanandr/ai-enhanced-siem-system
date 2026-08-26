@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Reports &mdash; SentinelAI SIEM{% endblock %}
+
+{% block content %}
+<div class="section-title"><span class="eyebrow">Export</span> Incident Reports</div>
+
+<form method="GET" id="exportForm" class="panel mb-3">
+  <div class="row g-2 align-items-end">
+    <div class="col-md-4">
+      <label class="form-label mb-1">Search</label>
+      <input type="text" name="q" class="form-control" placeholder="IP, username, attack type, summary&hellip;">
+    </div>
+    <div class="col-md-3">
+      <label class="form-label mb-1">Severity</label>
+      <select name="severity" class="form-select">
+        {% for s in ['All', 'Critical', 'High', 'Medium', 'Low'] %}
+          <option value="{{ s }}">{{ s }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-3">
+      <label class="form-label mb-1">Attack Type</label>
+      <select name="attack_type" class="form-select">
+        <option value="All">All</option>
+        {% for t in attack_types %}
+          <option value="{{ t }}">{{ t }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-2 d-flex gap-2">
+      <button type="submit" formaction="{{ url_for('export_report', fmt='pdf') }}" class="btn btn-accent w-100">PDF</button>
+      <button type="submit" formaction="{{ url_for('export_report', fmt='csv') }}" class="btn btn-outline-sentinel w-100">CSV</button>
+    </div>
+  </div>
+  <p class="text-muted small mt-2 mb-0">Filters apply to the exported file. Leave blank / "All" to export every incident.</p>
+</form>
+
+<div class="section-title" style="font-size:.95rem;">Preview &mdash; {{ incidents|length }} incident(s) on file</div>
+
+{% if incidents %}
+<div class="table-responsive panel">
+  <table class="table table-sentinel align-middle mb-0">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Attack Type</th>
+        <th>Severity</th>
+        <th>AI Summary</th>
+        <th>Recommendation</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for inc in incidents %}
+      <tr>
+        <td class="mono small text-muted">{{ inc.created_at }}</td>
+        <td class="small fw-semibold">{{ inc.attack_type }}</td>
+        <td><span class="badge-sev {{ inc.severity|severity_badge }}">{{ inc.severity|upper }}</span></td>
+        <td class="small text-muted" style="max-width: 320px;">{{ inc.ai_summary }}</td>
+        <td class="small text-muted" style="max-width: 320px;">{{ inc.recommendation }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="panel empty-state">
+  <div class="empty-icon">&#128196;</div>
+  <div class="fw-semibold text-light">No incidents to report yet</div>
+  <div class="small">Upload and analyze a log file to generate incident data.</div>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}Upload Logs &mdash; SentinelAI SIEM{% endblock %}
+
+{% block content %}
+<div class="section-title"><span class="eyebrow">Ingest</span> Upload Security Logs</div>
+
+<div class="row g-4 mb-4">
+  <div class="col-lg-6">
+    <form method="POST" action="{{ url_for('upload') }}" enctype="multipart/form-data" id="uploadForm">
+      <label class="dropzone" for="fileInput" id="dropzone">
+        <div class="dz-icon">&#8593;</div>
+        <div class="fw-semibold mb-1">Drag &amp; drop a .log or .txt file</div>
+        <div class="text-muted small">or click to browse &middot; max 10&nbsp;MB</div>
+        <div class="mono small mt-2" id="fileNameDisplay" style="color: var(--accent);"></div>
+      </label>
+      <input type="file" id="fileInput" name="logfile" accept=".log,.txt" class="d-none" required>
+      <button type="submit" class="btn btn-accent w-100 mt-3 py-2">Upload &amp; Parse</button>
+    </form>
+  </div>
+
+  <div class="col-lg-6">
+    <div class="panel h-100">
+      <div class="section-title mb-2" style="margin-bottom:.5rem !important;"><span class="eyebrow">Format</span> Supported Log Styles</div>
+      <p class="text-muted small mb-2">SentinelAI auto-detects the line format &mdash; no configuration needed:</p>
+      <div class="mono small mb-2" style="color: var(--text); background: var(--panel-alt); padding:.6rem .8rem; border-radius: 8px; border:1px solid var(--border);">
+        Jul 10 14:32:01 webserver sshd[1341]: Failed password for invalid user admin from 192.168.1.15 port 51000 ssh2
+      </div>
+      <div class="mono small" style="color: var(--text); background: var(--panel-alt); padding:.6rem .8rem; border-radius: 8px; border:1px solid var(--border);">
+        timestamp=2026-07-10T14:32:01 host=web01 user=admin ip=192.168.1.15 event=LOGIN_FAILED msg="invalid credentials"
+      </div>
+      <p class="text-muted small mt-2 mb-0">Don't have a sample file handy? The project ships with <span class="mono">sample_logs/</span> for a quick demo.</p>
+    </div>
+  </div>
+</div>
+
+<div class="section-title"><span class="eyebrow">Files</span> Uploaded Log Files</div>
+
+{% if files %}
+<div class="table-responsive panel">
+  <table class="table table-sentinel align-middle mb-0">
+    <thead>
+      <tr>
+        <th>Filename</th>
+        <th>Uploaded</th>
+        <th>Log Lines</th>
+        <th>Status</th>
+        <th class="text-end">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for f in files %}
+      <tr>
+        <td class="fw-semibold">{{ f.filename }}</td>
+        <td class="mono small text-muted">{{ f.upload_time }}</td>
+        <td>{{ f.log_count }}</td>
+        <td>
+          {% if f.status == 'analyzed' %}
+            <span class="badge-sev badge-low">ANALYZED</span>
+          {% else %}
+            <span class="badge-sev badge-medium">UPLOADED</span>
+          {% endif %}
+        </td>
+        <td class="text-end">
+          <a href="{{ url_for('view_file', file_id=f.id) }}" class="btn btn-sm btn-outline-sentinel">View</a>
+          <form method="POST" action="{{ url_for('analyze_file', file_id=f.id) }}" class="d-inline">
+            <button type="submit" class="btn btn-sm btn-accent">Analyze</button>
+          </form>
+          <form method="POST" action="{{ url_for('delete_file', file_id=f.id) }}" class="d-inline" onsubmit="return confirm('Delete this file and all its parsed logs?');">
+            <button type="submit" class="btn btn-sm btn-danger-soft">Delete</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="panel empty-state">
+  <div class="empty-icon">&#128193;</div>
+  <div class="fw-semibold text-light">No log files uploaded yet</div>
+  <div class="small">Upload a .log or .txt file above to get started.</div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/upload.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block title %}Incident History &mdash; SentinelAI SIEM{% endblock %}
+
+{% block content %}
+<div class="section-title"><span class="eyebrow">History</span> Incident History</div>
+
+<form method="GET" action="{{ url_for('incidents') }}" class="panel mb-3">
+  <div class="row g-2 align-items-end">
+    <div class="col-md-4">
+      <label class="form-label mb-1">Search</label>
+      <input type="text" name="q" value="{{ filters.q }}" class="form-control" placeholder="IP, username, attack type, summary&hellip;">
+    </div>
+    <div class="col-md-2">
+      <label class="form-label mb-1">Severity</label>
+      <select name="severity" class="form-select">
+        {% for s in ['All', 'Critical', 'High', 'Medium', 'Low'] %}
+          <option value="{{ s }}" {% if filters.severity == s %}selected{% endif %}>{{ s }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-3">
+      <label class="form-label mb-1">Attack Type</label>
+      <select name="attack_type" class="form-select">
+        <option value="All" {% if filters.attack_type == 'All' %}selected{% endif %}>All</option>
+        {% for t in attack_types %}
+          <option value="{{ t }}" {% if filters.attack_type == t %}selected{% endif %}>{{ t }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-2">
+      <label class="form-label mb-1">Sort</label>
+      <select name="sort" class="form-select">
+        <option value="created_at_desc" {% if filters.sort == 'created_at_desc' %}selected{% endif %}>Newest first</option>
+        <option value="created_at_asc" {% if filters.sort == 'created_at_asc' %}selected{% endif %}>Oldest first</option>
+        <option value="severity_desc" {% if filters.sort == 'severity_desc' %}selected{% endif %}>Severity: high&rarr;low</option>
+        <option value="severity_asc" {% if filters.sort == 'severity_asc' %}selected{% endif %}>Severity: low&rarr;high</option>
+      </select>
+    </div>
+    <div class="col-md-1">
+      <button type="submit" class="btn btn-accent w-100">Go</button>
+    </div>
+  </div>
+</form>
+
+{% if incidents %}
+<div class="table-responsive panel">
+  <table class="table table-sentinel align-middle mb-0">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Attack Type</th>
+        <th>Source IP</th>
+        <th>User</th>
+        <th>Severity</th>
+        <th>AI Summary</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for inc in incidents %}
+      <tr>
+        <td class="mono small text-muted">{{ inc.created_at }}</td>
+        <td class="small fw-semibold">{{ inc.attack_type }}</td>
+        <td class="ip-tag">{{ inc.source_ip or '&mdash;' }}</td>
+        <td class="small">{{ inc.username or '&mdash;' }}</td>
+        <td><span class="badge-sev {{ inc.severity|severity_badge }}">{{ inc.severity|upper }}</span></td>
+        <td class="small text-muted" style="max-width: 340px;">{{ inc.ai_summary }}</td>
+        <td class="text-end">
+          <button type="button" class="btn btn-sm btn-outline-sentinel" data-bs-toggle="modal" data-bs-target="#incidentModal{{ inc.id }}">Details</button>
+          <form method="POST" action="{{ url_for('delete_incident', incident_id=inc.id) }}" class="d-inline" onsubmit="return confirm('Delete this incident?');">
+            <button type="submit" class="btn btn-sm btn-danger-soft">Delete</button>
+          </form>
+        </td>
+      </tr>
+
+      <div class="modal fade" id="incidentModal{{ inc.id }}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+          <div class="modal-content" style="background: var(--panel); border: 1px solid var(--border); color: var(--text);">
+            <div class="modal-header" style="border-color: var(--border);">
+              <h5 class="modal-title">{{ inc.attack_type }} <span class="badge-sev {{ inc.severity|severity_badge }} ms-2">{{ inc.severity|upper }}</span></h5>
+              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+              <p class="mono small text-muted mb-3">{{ inc.created_at }} &middot; source IP <span class="ip-tag">{{ inc.source_ip }}</span> &middot; user(s): {{ inc.username or 'unknown' }} &middot; <span class="badge-provider">{{ inc.ai_provider }}</span></p>
+              <div class="mb-3">
+                <div class="text-muted small text-uppercase mb-1">Reason</div>
+                <div class="small">{{ inc.reason }}</div>
+              </div>
+              <div class="mb-3">
+                <div class="text-muted small text-uppercase mb-1">AI Summary</div>
+                <div class="small">{{ inc.ai_summary }}</div>
+              </div>
+              <div>
+                <div class="text-muted small text-uppercase mb-1">Recommended Mitigation</div>
+                <ul class="small mb-0">
+                  {% for r in inc.recommendation.split(';') %}
+                    <li>{{ r.strip() }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="panel empty-state">
+  <div class="empty-icon">&#128737;</div>
+  <div class="fw-semibold text-light">No incidents match your filters</div>
+  <div class="small">Try clearing search/filter, or analyze an uploaded log file first.</div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/incidents.js') }}"></script>
+{% endblock %}

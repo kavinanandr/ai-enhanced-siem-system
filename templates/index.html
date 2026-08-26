@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}SentinelAI SIEM &mdash; Home{% endblock %}
+
+{% block content %}
+<div class="hero-panel mb-4">
+  <div class="hero-eyebrow">AI-Enhanced SIEM &middot; Threat Detection &amp; Log Analysis</div>
+  <h1 class="hero-title">Turn raw security logs into<br>clear, prioritized incidents.</h1>
+  <p class="hero-lede">
+    Upload server, SSH, or application logs. SentinelAI parses them into structured data,
+    runs rule-based detection for brute-force and unauthorized-access patterns, then hands
+    suspicious activity to an AI analyst that explains what happened and what to do about it.
+  </p>
+  <div class="d-flex gap-2 mt-3">
+    <a href="{{ url_for('upload') }}" class="btn btn-accent px-4 py-2">Upload Logs</a>
+    <a href="{{ url_for('dashboard') }}" class="btn btn-outline-sentinel px-4 py-2">View Dashboard</a>
+  </div>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-6 col-md-3">
+    <div class="stat-card accent-brand">
+      <div class="stat-label">Total Log Files</div>
+      <div class="stat-value">{{ stats.total_files }}</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="stat-card accent-brand">
+      <div class="stat-label">Total Logs Parsed</div>
+      <div class="stat-value">{{ stats.total_logs }}</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="stat-card accent-high">
+      <div class="stat-label">High Alerts</div>
+      <div class="stat-value">{{ stats.severity_counts.High }}</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="stat-card accent-critical">
+      <div class="stat-label">Critical Alerts</div>
+      <div class="stat-value">{{ stats.severity_counts.Critical }}</div>
+    </div>
+  </div>
+</div>
+
+<div class="section-title"><span class="eyebrow">Pipeline</span> How it works</div>
+<div class="row g-3 mb-4">
+  <div class="col-6 col-md-4 col-lg-2">
+    <div class="feature-chip">
+      <div class="fc-title">1. Upload</div>
+      <div class="fc-desc">Drop in .log / .txt files from servers, SSH, or apps.</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-4 col-lg-2">
+    <div class="feature-chip">
+      <div class="fc-title">2. Parse</div>
+      <div class="fc-desc">Timestamp, IP, user, event type &amp; host extracted to JSON.</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-4 col-lg-2">
+    <div class="feature-chip">
+      <div class="fc-title">3. Detect</div>
+      <div class="fc-desc">Rule engine flags brute-force &amp; unauthorized access.</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-4 col-lg-2">
+    <div class="feature-chip">
+      <div class="fc-title">4. Analyze</div>
+      <div class="fc-desc">AI engine explains the threat and recommends action.</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-4 col-lg-2">
+    <div class="feature-chip">
+      <div class="fc-title">5. Visualize</div>
+      <div class="fc-desc">Dashboard charts, severity, timeline at a glance.</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-4 col-lg-2">
+    <div class="feature-chip">
+      <div class="fc-title">6. Report</div>
+      <div class="fc-desc">Export incident history as PDF or CSV.</div>
+    </div>
+  </div>
+</div>
+{% endblock %}
