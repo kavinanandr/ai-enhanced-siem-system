@@ -96,7 +96,12 @@ AI-Enhanced-SIEM/
   ai/
     ai_engine.py           AI analysis: OpenAI / Ollama / simulated
   detection/
-    log_parser.py          Raw line -> structured record
+    log_parse1. It endlessly loads or spins forever
+If clicking the "Sync" or "Push" button results in an infinite loading loop, it usually means Git is trying to ask for your credentials in the background but the prompt is blocked. ￼
+￼
+Reddit
+The Fix: Open your terminal and type git push. This will force the authentication prompt to appear. You will likely see a browser window pop up asking you to authorize VS Code with your GitHub account. ￼
+2. "Permission Denied" or account mismatchr.py          Raw line -> structured record
     rule_engine.py          Structured records -> suspicious findings
   database/
     db.py                   Connection + schema
