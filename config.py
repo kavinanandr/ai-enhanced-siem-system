@@ -18,11 +18,12 @@ class Config:
     SECRET_KEY = os.environ.get("SIEM_SECRET_KEY", "dev-secret-key-change-in-production")
     DEBUG = os.environ.get("SIEM_DEBUG", "true").lower() == "true"
 
-    # --- Storage -----------------------------------------------------------
+    # --- Storage ----------------------------------------------------------
     BASE_DIR = BASE_DIR
-    UPLOAD_FOLDER = str(BASE_DIR / "logs")
-    DATABASE_PATH = str(BASE_DIR / "data" / "siem.db")
-    REPORTS_FOLDER = str(BASE_DIR / "reports" / "generated")
+    WRITABLE_DIR = Path("/tmp") if os.environ.get("VERCEL") else BASE_DIR
+    UPLOAD_FOLDER = str(WRITABLE_DIR / "logs")
+    DATABASE_PATH = str(WRITABLE_DIR / "data" / "siem.db")
+    REPORTS_FOLDER = str(WRITABLE_DIR / "reports" / "generated")
 
     ALLOWED_EXTENSIONS = {"log", "txt"}
     MAX_CONTENT_LENGTH = 10 * 1024 * 1024  # 10 MB per uploaded file
